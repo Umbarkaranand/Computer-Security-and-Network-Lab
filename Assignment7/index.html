@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Secure login</title>
+
+    <script>
+      const database = {};
+      const SALT = "Fixed";
+
+      function hashPassword(SALT, password) {
+        const saltedpassword = SALT + password;
+        let hash = 0;
+        for (let i = 0; i < saltedpassword.length; i++) {
+          hash = (hash * 32) - hash + saltedpassword.charCodeAt(i);
+        }
+        return hash.toString();
+      }
+
+      function register(event) {
+        event.preventDefault();
+        const email = document.getElementById("register-email").value;
+        const password = document.getElementById("register-password").value;
+
+        if (database[email]) {
+          alert("User found");
+          return;
+        }
+
+        database[email] = hashPassword(SALT, password);
+        alert("Registration successful");
+        window.location.href = 'thank_you.html';  // Redirect to a new page after successful registration
+      }
+
+      function login(event) {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        if (!database[email]) {
+          alert("User not found");
+          return;
+        }
+
+        if (hashPassword(SALT, password) == database[email]) {
+          alert("Login successful");
+        } else {
+          alert("Invalid password");
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <form onsubmit="register(event)">
+      <h3>Registration</h3>
+      <div>
+        <label>Enter Email: </label>
+        <input type="email" id="register-email" />
+      </div>
+      <br />
+      <div>
+        <label>Enter password:</label>
+        <input type="password" id="register-password" />
+      </div>
+      <br />
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <form onsubmit="login(event)">
+      <h3>Login</h3>
+      <div>
+        <label>Enter Email: </label>
+        <input type="email" id="login-email" />
+      </div>
+      <br />
+      <div>
+        <label>Enter password:</label>
+        <input type="password" id="login-password" />
+      </div>
+      <br />
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  </body>
+</html>
